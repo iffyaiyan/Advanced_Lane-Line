@@ -1,5 +1,4 @@
-## Advanced Lane Finding
-[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
+## Advanced_Lane_Finding
 
 ## Writeup for Project
 
@@ -8,7 +7,7 @@
 
 **Advanced Lane Finding Project**
 
-The goals / steps of this project are the following:
+The steps taken in this project are the following:
 
 * Compute the camera calibration matrix and distortion coefficients given a set of chessboard images.
 * Apply a distortion correction to raw images.
@@ -32,13 +31,25 @@ The goals / steps of this project are the following:
 
 ---
 
+## Project Overview
+
+In order to detect the lane lines in a video stream we must accomplish the folowing:
+
+- **Camera Calibration** - Calibrate the camera to correct for image distortions. For this I used a set of chessboard images, knowing the distance and angles between common features like corners, one can calculate the tranformation functions and apply them to the video frames.
+
+- **Color Transform** - I used a set of image manipulation techniques to accentuate certain features like lane lines. Then I used color space transformations, like from RGB to HLS, channel separation, like separating the S channel from the HLS image and image gradient to allow us to identify the desired lines.
+
+- **Perspective Transform** - I applied a "bird’s-eye view transform" that let's us view a lane from above and thus identify the lane lines, measure its curvature and respective radius.
+
+- **Lane Pixel Detection** - After that I analysed the transformed image and try to detect the lane pixels. I used a series of windows and identified the lane lines by finding the peeks in a histogram of each window's.
+
+- **Image augmentation** - I added a series of overlays to the image to: identify the lane lines, showed the "bird's eye view" perspective, showed the location of the rectangle windows where the lane pixels are and finaly metrics on the radius of curvature and distance to the center of the road.
+
+- **Pipeline** - And finally put it all together in a pipeline so we can apply it to the video stream.
+
 ### Camera Calibration
 
-#### 1. Briefly state how you computed the camera matrix and distortion coefficients. Provide an example of a distortion corrected calibration image.
-
-The code for this step is contained in the **5th** code cell of the IPython notebook [Advanced-Lane-Lines.ipynb](Advanced-Lane-Lines.ipynb).
-
-I start by preparing "object points", which will be the (x, y, z) coordinates of the chessboard corners in the world. Here I am assuming the chessboard is fixed on the (x, y) plane at z=0 (depth), such that the object points are the same for each calibration image.  Thus, `objp` is just a replicated array of coordinates, and `objpoints` will be appended with a copy of it every time I successfully detect all chessboard corners in a test image.  `imgpoints` will be appended with the (x, y) pixel position of each of the corners in the image plane with each successful chessboard detection.  
+I started by preparing "object points", which will be the (x, y, z) coordinates of the chessboard corners in the world. Here I am assuming the chessboard is fixed on the (x, y) plane at z=0 (depth), such that the object points are the same for each calibration image.  
 
 I used the OpenCV functions **findChessboardCorners** and **drawChessboardCorners** to identify the locations of corners on a chessboard photos in **camera_cal** folder taken from different angles.
 
@@ -50,9 +61,7 @@ I then used the output `objpoints` and `imgpoints` to compute the camera calibra
 
 All output images are in [cameraCalibrationOutput.](output_images/1.camera_cal_Output)
 
-### Pipeline (single images)
-
-#### 1. Provide an example of a distortion-corrected image.
+Finally I calibrated the camera and got my matrix and distortion
 
 Applied a distortion correction to raw images placed in folder **test_images**.
 
@@ -60,7 +69,6 @@ Applied a distortion correction to raw images placed in folder **test_images**.
 
 - Output : the undistorted image.
 
-The code is in **7th** cell of [Advanced-Lane-Lines.ipynb](Advanced-Lane-Lines.ipynb).
 ![alt text][image3]
 
 ![alt text][image4]
@@ -68,22 +76,13 @@ The code is in **7th** cell of [Advanced-Lane-Lines.ipynb](Advanced-Lane-Lines.i
 All output images are in [testImagesOutput.](output_images/2.test_images_Output)
 
 
-#### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
-
-I used a combination of color and gradient thresholds to generate a binary image (thresholding steps in **11th** cell of [Advanced-Lane-Lines.ipynb](Advanced-Lane-Lines.ipynb).  
-
+### Color Transform
+Here I used a series of image manipulation techniquest to detect the edges, lines, of an image
   - Converted the warped image to different color spaces and created binary thresholded images which highlight only lane lines and ignore everything else.
   - Following color channels were used:
     - 'S' Channel from HLS color space, with a minimum threshold = 180 & max threshold = 255
-       - Good: Identifies the white and yellow lane lines,
-       - Bad: Did not pick up 100% of the pixels in either one with the tendency to get distracted by shadows on the road.
     - 'L' Channel from LUV color space, with a min threshold = 225 & max threshold = 255,
-       - Good: Picks up almost all the white lane lines, but
-       - Bad: completely ignores the yellow lines.
     - 'B' channel from the LAB color space, with a min threshold = 155 & max threshold = 200,
-       - Good : Identifies the yellow lines much better than S channel, but
-       - Bad: Completely ignores the white lines.
-
    - Created a combined binary threshold based on the above three mentioned binary thresholds.
 
 Here's an example of my output for this step.
@@ -92,12 +91,9 @@ Here's an example of my output for this step.
 
 ![alt text][image6]
 
-All output images are in [binaryThresholdOutput.](output_images/4.binary_thresholds_Output)
 
-
-#### 3. Describe how (and identify where in your code) you performed a perspective transform and provide an example of a transformed image.
-
-The code for my perspective transform is in **9th code** cell in  [Advanced-Lane-Lines.ipynb](Advanced-Lane-Lines.ipynb), which includes a function called `birds_eye_view()` It takes as inputs an image (`img`) and hardcodes the source (`src`) and destination (`dst`) points.  
+### Perspective Transform
+For writing my perspective transform I defined a matrix of source and destination points in the images as to transform them to the "bird's eye view" using OpenCV getPerspectiveTransform function. It takes as inputs an image (`img`) and hardcodes the source (`src`) and destination (`dst`) points.  
 - It uses the CV2's **getPerspectiveTransform()** and **warpPerspective()** fns and **undistort()** written as discussed above.
 - I hardcoded the source and destination points in the following manner:
 
@@ -112,12 +108,10 @@ I verified that my perspective transform was working as expected by drawing the 
 
 ![alt text][image7]
 
-All output images are in [birdsEyeViewOutput.](output_images/3.birds_eye_view_Output)
 
+### Lane Pixel Detection
 
-#### 4. Describe how (and identify where in your code) you identified lane-line pixels and fit their positions with a polynomial?
-
-The code is in **13th code** cell of [Advanced-Lane-Lines.ipynb](Advanced-Lane-Lines.ipynb) and function is named **color_lane()**..
+The next challenge is, by using the transformed image, identify the lane line pixels. To accomplish this I used a method called "Peaks in a Histogram" where I analysed the histogram of section of the image, window, and identify the peaks which represent the location of the lane lines.
 
 Starting with the combined binary image to isolate only the pixels belonging to lane lines, I fit the polynomial to each lane line, as follows:
 
@@ -134,11 +128,8 @@ With this, I was able to calculate the position of the vehicle w.r.t center with
 
 ![alt text][image8]
 
-All output images are in [colorLanesOutput.](output_images/5.color_lanes_Output)
 
-#### 5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
-
-The code is in **13th code** cell of [Advanced-Lane-Lines.ipynb](Advanced-Lane-Lines.ipynb) and function is named **color_lane()**.
+### Image  Augmentation
 
 ```
 # Find radius of curvature for both lane line
@@ -153,15 +144,13 @@ radius_right_curve = ((1 + (2*right_lane_fit_curvature[0]*np.max(left_y) + right
                                 /np.absolute(2*right_lane_fit_curvature[0])
 ```
 
-#### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
+Here I have provided an example image of my result plotted back down onto the road such that the lane area is identified clearly.
 
 Shown in example above.
 
 ---
 
 ### Pipeline (video)
-
-#### 1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
 - Output for : **project_video.mp4**
 
@@ -176,13 +165,11 @@ Shown in example above.
 
 ### Discussion
 
-#### 1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
+- The pipeline developed this project did a real good job in detecting the lane lines for the  [project_video.mp4] video, which implied that the code worrks well for the known ideal conditions having distinct lane lines, and with not much shadows.
 
-- The pipeline developed this project did a real good job in detecting the lane lines for the  [project_video.mp4](https://youtu.be/IXanFQSjAGU) video, which implied that the code worrks well for the known ideal conditions having distinct lane lines, and with not much shadows.
+- Code mostly did fine on the [challenge_result.mp4] video, with sometimes losing lane lines when heavy shadow was there.
 
-- Code mostly did fine on the [challenge_result.mp4](https://youtu.be/Axt0_GvmV7g) video, with sometimes losing lane lines when heavy shadow was there.
-
-- Code failed miserably on the [harder_challenge_video.mp4](https://github.com/udacity/CarND-Advanced-Lane-Lines/blob/master/harder_challenge_video.mp4). Here the code got exposed in mot being ready on steep curves, and shadows.
+- Code failed miserably on the [harder_challenge_video.mp4] video.
 
 In order to make it more robust, I guess I need to go back and revisit the binary channels selection and see if there is any other combination that can help and work fine in shadows and steep curves. Further reading on this topic may help in making the code robust for challenge videos.
 
