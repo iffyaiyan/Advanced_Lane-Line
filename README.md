@@ -39,7 +39,7 @@ In order to detect the lane lines in a video stream we must accomplish the folow
 
 - **Color Transform** - I used a set of image manipulation techniques to accentuate certain features like lane lines. Then I used color space transformations, like from RGB to HLS, channel separation, like separating the S channel from the HLS image and image gradient to allow us to identify the desired lines.
 
-- **Perspective Transform** - I applied a "bird’s-eye view transform" that let's us view a lane from above and thus identify the lane lines, measure its curvature and respective radius.
+- **Perspective Transform** - I applied a "bird’s-eye view transform" that let me view a lane from above and thus identify the lane lines, measure its curvature and respective radius.
 
 - **Lane Pixel Detection** - After that I analysed the transformed image and try to detect the lane pixels. I used a series of windows and identified the lane lines by finding the peeks in a histogram of each window's.
 
@@ -72,8 +72,6 @@ Applied a distortion correction to raw images placed in folder **test_images**.
 ![alt text][image3]
 
 ![alt text][image4]
-
-All output images are in [testImagesOutput.](output_images/2.test_images_Output)
 
 
 ### Color Transform
