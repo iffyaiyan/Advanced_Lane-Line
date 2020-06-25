@@ -59,8 +59,6 @@ I then used the output `objpoints` and `imgpoints` to compute the camera calibra
 
 ![alt text][image2]
 
-All output images are in [cameraCalibrationOutput.](output_images/1.camera_cal_Output)
-
 Finally I calibrated the camera and got my matrix and distortion
 
 Applied a distortion correction to raw images placed in folder **test_images**.
