@@ -151,11 +151,11 @@ Shown in example above.
 - Output for : **project_video.mp4**
 
 
-[![Watch the video](output_images/project_video_output_sample_img.png )](https://youtu.be/IXanFQSjAGU)
+[![Watch the video](output_images/project_video_output_sample_img.png )]
 
 - Output for : **challenge_video.mp4**
 
-[![Watch the video](output_images/challenge_video_ouput_sample_img.png )](https://youtu.be/Axt0_GvmV7g)
+[![Watch the video](output_images/challenge_video_ouput_sample_img.png )]
 
 ---
 
