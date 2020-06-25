@@ -146,14 +146,14 @@ Shown in example above.
 
 ---
 
-### Pipeline (video)
+### Pipeline
 
-- Output for : **project_video.mp4**
+- Screenshot of Output for : **project_video.mp4**
 
 
 [![Watch the video](output_images/project_video_output_sample_img.png )]
 
-- Output for : **challenge_video.mp4**
+- Screenshot of Output for : **challenge_video.mp4**
 
 [![Watch the video](output_images/challenge_video_ouput_sample_img.png )]
 
